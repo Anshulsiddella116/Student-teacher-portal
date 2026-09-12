@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduSync — Student & Teacher Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="landing" class="screen active">
+  <div class="landing-wrap">
+    <div class="landing-hero">
+      <div class="hero-deco"></div>
+      <div class="hero-logo"><span></span> EduSync</div>
+      <h1 class="hero-title">Where <em>learning</em><br>meets clarity.</h1>
+      <p class="hero-sub">A unified portal for teachers to publish assignments and students to track their academic journey — seamlessly.</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Assignments</div></div>
+        <div class="stat"><div class="stat-num">2</div><div class="stat-label">Roles</div></div>
+        <div class="stat"><div class="stat-num">1</div><div class="stat-label">Platform</div></div>
+      </div>
+    </div>
+
+    <div class="landing-form-side">
+      <div class="form-header">
+        <h2>Welcome back</h2>
+        <p>Sign in to your account or create a new one</p>
+      </div>
+
+      <div class="role-tabs">
+        <button class="role-tab active" onclick="switchRole('student')">🎓 Student</button>
+        <button class="role-tab" onclick="switchRole('teacher')">📋 Teacher</button>
+      </div>
+
+      <div id="msg-landing" class="msg"></div>
+
+      <div id="login-form">
+        <div class="field">
+          <label>Your ID</label>
+          <input type="text" id="login-id" placeholder="Enter your student / teacher ID">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="login-pw" placeholder="Enter your password">
+        </div>
+        <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+        <span class="link-toggle" onclick="showRegister()">New here? <strong>Create an account</strong></span>
+      </div>
+
+      <div id="register-form" style="display:none">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="Your full name">
+        </div>
+        <div class="field">
+          <label>Choose an ID</label>
+          <input type="text" id="reg-id" placeholder="e.g. STU2025 or TCH001">
+        </div>
+        <div class="field-row">
+          <div class="field" style="margin:0">
+            <label>Password</label>
+            <input type="password" id="reg-pw" placeholder="Set password">
+          </div>
+          <div class="field" style="margin:0">
+            <label>Confirm</label>
+            <input type="password" id="reg-pw2" placeholder="Repeat it">
+          </div>
+        </div>
+        <br>
+        <button class="btn-primary" onclick="doRegister()">Create Account →</button>
+        <span class="link-toggle" onclick="showLogin()">Already registered? <strong>Sign in</strong></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEACHER DASHBOARD -->
+<div id="teacher-dashboard" class="screen">
+  <div class="dashboard-wrap">
+    <div class="topbar">
+      <div class="topbar-brand"><div class="live-dot"></div> EduSync</div>
+      <div class="topbar-right">
+        <div class="user-chip">
+          <div class="user-info">
+            <div class="user-name" id="teacher-name-top"></div>
+            <div class="user-role">Teacher</div>
+          </div>
+          <div id="teacher-avatar" class="avatar"></div>
+        </div>
+        <button class="btn-signout" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sidebar-label">Navigation</div>
+      <button class="nav-item active" id="nav-post" onclick="teacherTab('post')">
+        <span class="nav-icon">✏️</span> Post Assignment
+      </button>
+      <button class="nav-item" id="nav-view" onclick="teacherTab('view')">
+        <span class="nav-icon">📚</span> All Assignments
+      </button>
+    </div>
+
+    <div class="main-content">
+      <div id="teacher-post-panel">
+        <div class="page-header">
+          <div class="page-title">New Assignment</div>
+          <div class="page-sub">Publish a new assignment for your students</div>
+        </div>
+        <div class="form-card">
+          <h3>Assignment Details</h3>
+          <div class="field">
+            <label>Subject</label>
+            <input type="text" id="t-subject" placeholder="e.g. Mathematics, History, Physics…">
+          </div>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="t-title" placeholder="A clear, descriptive title">
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea id="t-desc" placeholder="Instructions, context, resources…"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field" style="margin:0">
+              <label>Publish Date</label>
+              <input type="date" id="t-publish">
+            </div>
+            <div class="field" style="margin:0">
+              <label>Due Date</label>
+              <input type="date" id="t-due">
+            </div>
+          </div>
+          <div class="field" style="margin-top:14px">
+            <label>Attachment (PDF, optional)</label>
+            <div class="pdf-drop-zone" id="teacher-drop-zone"
+              ondragover="handleDragOver(event,'teacher-drop-zone')"
+              ondragleave="handleDragLeave('teacher-drop-zone')"
+              ondrop="handleDrop(event,'teacher-pdf-input','teacher-pdf-preview','teacher-pdf-data','teacher-drop-zone')">
+              <input type="file" id="teacher-pdf-input" accept=".pdf"
+                onchange="handleFileSelect(this,'teacher-pdf-preview','teacher-pdf-data','teacher-drop-zone')">
+              <div class="pdf-drop-icon">📎</div>
+              <div class="pdf-drop-text"><strong>Click to browse</strong> or drag &amp; drop a PDF</div>
+              <div class="pdf-drop-hint">Max file size: 5 MB</div>
+            </div>
+            <div id="teacher-pdf-preview" style="display:none" class="pdf-preview">
+              <span class="pdf-preview-icon">📄</span>
+              <span class="pdf-preview-name" id="teacher-pdf-name"></span>
+              <span class="pdf-preview-size" id="teacher-pdf-size"></span>
+              <button class="pdf-remove-btn" onclick="removePdf('teacher-pdf-input','teacher-pdf-preview','teacher-pdf-data','teacher-drop-zone')" title="Remove">&#x2715;</button>
+            </div>
+          </div>
+          <input type="hidden" id="teacher-pdf-data">
+          <input type="hidden" id="teacher-pdf-filename">
+          <br>
+          <div id="msg-post" class="msg"></div>
+          <button class="btn-primary" onclick="postAssignment()">Publish Assignment &#x2192;</button>
+        </div>
+      </div>
+
+      <div id="teacher-view-panel" style="display:none">
+        <div class="page-header">
+          <div class="page-title">Your Assignments</div>
+          <div class="page-sub">All assignments you've posted</div>
+        </div>
+        <div id="teacher-assignments-list" class="assignments-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT DASHBOARD -->
+<div id="student-dashboard" class="screen">
+  <div class="dashboard-wrap">
+    <div class="topbar">
+      <div class="topbar-brand"><div class="live-dot"></div> EduSync</div>
+      <div class="topbar-right">
+        <div class="user-chip">
+          <div class="user-info">
+            <div class="user-name" id="student-name-top"></div>
+            <div class="user-role">Student</div>
+          </div>
+          <div id="student-avatar" class="avatar"></div>
+        </div>
+        <button class="btn-signout" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sidebar-label">Navigation</div>
+      <button class="nav-item active">
+        <span class="nav-icon">📋</span> My Assignments
+      </button>
+    </div>
+
+    <div class="main-content">
+      <div class="page-header">
+        <div class="page-title">Your Assignments</div>
+        <div class="page-sub">Assignments published for you</div>
+      </div>
+      <div id="student-assignments-list" class="assignments-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
